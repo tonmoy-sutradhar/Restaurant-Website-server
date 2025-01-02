@@ -25,10 +25,23 @@ async function run() {
   try {
     await client.connect();
     const menuCollection = client.db("Restaurant").collection("menu");
+    const reviewsCollection = client.db("Restaurant").collection("reviews");
+    const cartCollection = client.db("Restaurant").collection("carts");
 
     // Restaurant item add
     app.get("/menu", async (req, res) => {
       const result = await menuCollection.find().toArray();
+      res.send(result);
+    });
+    app.get("/reviews", async (req, res) => {
+      const result = await reviewsCollection.find().toArray();
+      res.send(result);
+    });
+
+    // cart data
+    app.post("/carts", async (req, res) => {
+      const cart = req.body;
+      const result = await cartCollection.insertOne(cart);
       res.send(result);
     });
 
