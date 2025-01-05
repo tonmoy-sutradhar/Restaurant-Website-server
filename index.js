@@ -10,7 +10,7 @@ app.use(cors());
 
 // -----------------------------------------MongoDB Connection--------------------------------------------------
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.cjt8m.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 const client = new MongoClient(uri, {
@@ -33,15 +33,33 @@ async function run() {
       const result = await menuCollection.find().toArray();
       res.send(result);
     });
+
     app.get("/reviews", async (req, res) => {
       const result = await reviewsCollection.find().toArray();
       res.send(result);
     });
 
-    // cart data
+    // cart data post
     app.post("/carts", async (req, res) => {
       const cart = req.body;
       const result = await cartCollection.insertOne(cart);
+      res.send(result);
+    });
+
+    // cart data get
+    app.get("/carts", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await cartCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    // cart delete by id
+    app.delete("/carts/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await cartCollection.deleteOne(query);
+
       res.send(result);
     });
 
